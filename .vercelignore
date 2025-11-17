@@ -33,15 +33,15 @@ Thumbs.db
 .env.production.local
 
 # Source files (only deploy build output)
-server/**/*.ts
-app/**/*.ts
-shared/**/*.ts
-plugins/**/*.ts
+server
+app
+shared
+plugins
 *.test.ts
 *.test.js
 
-# Keep only the built files
-!build
+# Build output is needed for deployment
+# The build directory will be created during Vercel build process
 
 # Documentation
 docs

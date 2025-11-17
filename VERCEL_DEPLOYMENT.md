@@ -44,18 +44,28 @@ Vercel's serverless functions are stateless, so you MUST use S3:
 - DigitalOcean Spaces
 - Backblaze B2
 
+## How It Works
+
+This deployment uses a serverless wrapper (`api/index.js`) that loads the Outline Koa application and handles HTTP requests through Vercel's serverless functions.
+
+**Architecture:**
+- `api/index.js` - Serverless function entry point
+- `vercel.json` - Vercel configuration with build commands
+- Build process runs `yarn build` to create production-ready code
+- All requests are routed through the serverless function
+
 ## Deployment Steps
 
-### Step 1: Build the Application
+### Step 1: Build the Application (Optional - Vercel will do this)
 
-Before deploying, build the application locally:
+You can test the build locally before deploying:
 
 ```bash
 yarn install
 yarn build
 ```
 
-This creates the `build` directory that Vercel will deploy.
+This creates the `build` directory. Vercel will run this automatically during deployment.
 
 ### Step 2: Configure Environment Variables
 
@@ -209,6 +219,28 @@ URL=https://docs.yourdomain.com
 
 ## Troubleshooting
 
+### 404: NOT_FOUND Error
+
+If you see `404: NOT_FOUND` or `Code: NOT_FOUND` after deployment:
+
+**Cause:** The build directory wasn't created or the serverless function can't find the built files.
+
+**Solutions:**
+1. Check that the build succeeded in Vercel's deployment logs
+2. Ensure `yarn build` completed without errors
+3. Verify environment variables are set (especially `DATABASE_URL` and `REDIS_URL`)
+4. The build needs database access - make sure DATABASE_URL is set in build environment
+
+**Quick Fix:**
+```bash
+# Test the build locally first
+yarn install
+yarn build
+
+# Check that build/server/routes/index.js exists
+ls -la build/server/routes/
+```
+
 ### Build Fails
 
 ```bash
@@ -220,6 +252,7 @@ Common issues:
 - Missing dependencies: Run `yarn install`
 - TypeScript errors: Check `yarn lint`
 - Out of memory: Vercel build has 3GB limit
+- Database not accessible during build: Ensure DATABASE_URL is in both build and runtime environment variables
 
 ### Runtime Errors
 
