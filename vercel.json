@@ -1,0 +1,46 @@
+{
+  "version": 2,
+  "name": "outline",
+  "buildCommand": "yarn build",
+  "installCommand": "yarn install",
+  "builds": [
+    {
+      "src": "build/server/index.js",
+      "use": "@vercel/node",
+      "config": {
+        "maxDuration": 300,
+        "includeFiles": [
+          "build/**",
+          "public/**",
+          "app/index.html"
+        ]
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/static/(.*)",
+      "dest": "/public/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/build/server/index.js"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  },
+  "build": {
+    "env": {
+      "NODE_ENV": "production",
+      "VITE_CJS_IGNORE_WARNING": "true"
+    }
+  },
+  "functions": {
+    "build/server/index.js": {
+      "memory": 3008,
+      "maxDuration": 300
+    }
+  },
+  "regions": ["iad1"]
+}
